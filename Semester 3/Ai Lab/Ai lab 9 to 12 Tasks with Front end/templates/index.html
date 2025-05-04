@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Farm Production Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Farm Production Prediction</h2>
+        <form action="/predict" method="post">
+            <input type="number" name="price" placeholder="Average Farm Price" required>
+            <input type="number" name="yield" placeholder="Average Yield" required>
+            <input type="number" name="production" placeholder="Production (Metric Tonnes)" required>
+            <input type="number" name="area_acres" placeholder="Seeded Area (Acres)" required>
+            <input type="number" name="area_hectares" placeholder="Seeded Area (Hectares)" required>
+            <input type="number" name="total_value" placeholder="Total Farm Value" required>
+            <button type="submit">Predict</button>
+        </form>
+        <h3>{{ prediction_text }}</h3>
+    </div>
+</body>
+</html>
