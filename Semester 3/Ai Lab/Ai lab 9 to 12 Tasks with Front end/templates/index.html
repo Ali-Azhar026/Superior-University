@@ -2,22 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Farm Production Predictor</title>
+    <title>Farm Value Prediction</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h2>Farm Production Prediction</h2>
-        <form action="/predict" method="post">
-            <input type="number" name="price" placeholder="Average Farm Price" required>
-            <input type="number" name="yield" placeholder="Average Yield" required>
-            <input type="number" name="production" placeholder="Production (Metric Tonnes)" required>
-            <input type="number" name="area_acres" placeholder="Seeded Area (Acres)" required>
-            <input type="number" name="area_hectares" placeholder="Seeded Area (Hectares)" required>
-            <input type="number" name="total_value" placeholder="Total Farm Value" required>
+        <h1>🌾 Farm Value Predictor 🌾</h1>
+        <form action="/predict" method="POST">
+            <input type="text" name="Type of crop" placeholder="Type of crop (encoded)" required>
+            <input type="text" name="Average farm price (dollars per tonne)" placeholder="Farm Price" required>
+            <input type="text" name="Average yield (kilograms per hectare)" placeholder="Average Yield" required>
+            <input type="text" name="Production (metric tonnes)" placeholder="Production" required>
+            <input type="text" name="Seeded area (acres)" placeholder="Seeded Area (acres)" required>
+            <input type="text" name="Seeded area (hectares)" placeholder="Seeded Area (hectares)" required>
             <button type="submit">Predict</button>
         </form>
-        <h3>{{ prediction_text }}</h3>
+        <h2>{{ prediction_text }}</h2>
     </div>
 </body>
 </html>

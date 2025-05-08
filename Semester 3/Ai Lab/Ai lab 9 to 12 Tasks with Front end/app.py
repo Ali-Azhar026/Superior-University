@@ -1,12 +1,14 @@
-import numpy as np
-import pandas as pd
 from flask import Flask, render_template, request
 import pickle
+import numpy as np
 
 app = Flask(__name__)
 
-# Load the trained model
-model = pickle.load(open("model.pkl", "rb"))
+# Load model and scaler
+with open('model.pkl', 'rb') as f:
+    model = pickle.load(f)
+with open('scaler.pkl', 'rb') as f:
+    scaler = pickle.load(f)
 
 @app.route('/')
 def home():
@@ -15,19 +17,13 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        features = [
-            int(request.form['price']),
-            int(request.form['yield']),
-            int(request.form['production']),
-            int(request.form['area_acres']),
-            int(request.form['area_hectares']),
-            int(request.form['total_value'])
-        ]
-        prediction = model.predict([features])
-        return render_template('index.html', prediction_text=f'Predicted Value: {prediction[0]}')
+        features = [float(x) for x in request.form.values()]
+        final_input = scaler.transform([features])
+        prediction = model.predict(final_input)
+        result = "High Value Farm" if prediction[0] == 1 else "Low Value Farm"
+        return render_template('index.html', prediction_text=f"Prediction: {result}")
     except Exception as e:
-        return render_template('index.html', prediction_text=f'Error: {str(e)}')
+        return render_template('index.html', prediction_text=f"Error: {str(e)}")
 
 if __name__ == "__main__":
     app.run(debug=True)
-
