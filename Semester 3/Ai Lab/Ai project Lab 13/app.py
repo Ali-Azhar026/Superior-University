@@ -1,41 +1,37 @@
-from flask import Flask, render_template, request
-import pickle
 import numpy as np
 import pandas as pd
+import pickle
+from flask import Flask, request, render_template
 
 app = Flask(__name__)
-model = pickle.load(open("model.pkl", "rb"))
+model = pickle.load(open('model.pkl', 'rb'))
 
-@app.route("/")
+# Replace this list with your actual 26 input feature names
+feature_names = [
+    'tests_per_case', 'reproduction_rate', 'stringency_index', 'population_density', 'median_age',
+    'aged_65_older', 'aged_70_older', 'gdp_per_capita', 'extreme_poverty', 'cardiovasc_death_rate',
+    'diabetes_prevalence', 'hospital_beds_per_thousand', 'life_expectancy', 'human_development_index',
+    'icu_patients', 'icu_patients_per_million', 'hosp_patients', 'hosp_patients_per_million',
+    'weekly_icu_admissions', 'weekly_hosp_admissions', 'date', 'continent', 'location', 'positive_rate',
+    'people_vaccinated', 'people_fully_vaccinated'
+]
+
+@app.route('/')
 def home():
-    return render_template("index.html")
+    return render_template('index.html', feature_names=feature_names)
 
-@app.route("/predict", methods=["POST"])
+@app.route('/predict', methods=['POST'])
 def predict():
-    if request.method == "POST":
-        try:
-            features = [
-                float(request.form.get("tests_per_case")),
-                float(request.form.get("reproduction_rate")),
-                float(request.form.get("stringency_index")),
-                float(request.form.get("population_density")),
-                float(request.form.get("median_age")),
-                float(request.form.get("aged_65_older")),
-                float(request.form.get("aged_70_older")),
-                float(request.form.get("gdp_per_capita")),
-                float(request.form.get("extreme_poverty")),
-                float(request.form.get("cardiovasc_death_rate")),
-                float(request.form.get("diabetes_prevalence")),
-                int(request.form.get("date")),
-                int(request.form.get("continent")),
-                int(request.form.get("location")),
-                float(request.form.get("positive_rate")),
-            ]
-            features_array = np.array([features])
-            prediction = model.predict(features_array)
-            return render_template("index.html", prediction_text=f"Predicted New Deaths: {int(prediction[0])}")
-        except Exception as e:
-            return render_template("index.html", prediction_text=f"Error: {str(e)}")
+    try:
+        inputs = [float(request.form[feature]) for feature in feature_names]
+        final_input = np.array(inputs).reshape(1, -1)
+        prediction = model.predict(final_input)
+        result = "Prediction: Death Likely (1)" if prediction[0] == 1 else "Prediction: No Death Likely (0)"
+        return render_template('index.html', feature_names=feature_names, prediction_text=result)
+    except Exception as e:
+        return render_template('index.html', feature_names=feature_names, prediction_text=f"Error: {str(e)}")
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
+
+
